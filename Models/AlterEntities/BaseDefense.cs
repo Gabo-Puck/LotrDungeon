@@ -7,8 +7,9 @@ using LotrDungeon.Models.Entities;
 
 namespace LotrDungeon.Models.AlterEntities
 {
-    public abstract class BaseDefense : IAlterState
+    public abstract class BaseDefense : AlterState
     {
-        public abstract (Stats attackerState, Stats defenderState) AlterState(BaseEntity attacker, BaseEntity defender);
+        protected float BASE_DEFENSE = 0.5f;
+        public override abstract (Stats attackerState, Stats defenderState) AlterEntityState(BaseEntity attacker, BaseEntity defender);
     }
 }

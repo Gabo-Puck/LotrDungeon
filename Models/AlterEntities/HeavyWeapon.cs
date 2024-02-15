@@ -15,7 +15,7 @@ namespace LotrDungeon.Models.AlterEntities
         {
         }
 
-        public override (Stats attackerState, Stats defenderState) AlterState(BaseEntity attacker, BaseEntity defender)
+        public override (Stats attackerState, Stats defenderState) AlterEntityState(BaseEntity attacker, BaseEntity defender)
         {
             Console.WriteLine("Maze attack!!!");
             //calc attacker stats

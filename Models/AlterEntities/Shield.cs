@@ -9,9 +9,18 @@ namespace LotrDungeon.Models.AlterEntities
 {
     public class Shield : BaseDefense
     {
-        public override (Stats attackerState, Stats defenderState) AlterState(BaseEntity attacker, BaseEntity defender)
+        public override (Stats attackerState, Stats defenderState) AlterEntityState(BaseEntity attacker, BaseEntity defender)
         {
-            throw new NotImplementedException();
+            Console.WriteLine("Shield defense!!!");
+            //calc attacker stats
+            var attackerState = new Stats();
+            attackerState.DamageMitigation += (int)BASE_DEFENSE;
+
+            //cal defender stats
+            var defenderState = new Stats();
+            
+            
+            return (attackerState,defenderState);
         }
     }
 }

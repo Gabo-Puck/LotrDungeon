@@ -7,14 +7,19 @@ using LotrDungeon.Models.Entities;
 
 namespace LotrDungeon.Models.AlterEntities
 {
-    public class Armor : BaseDefense
+    public class Lembda : BaseAccesory
     {
+        int BASE_HEALTH_BONUS = 5;
+        public Lembda(int _quantity, bool _consumible) : base(_quantity, _consumible)
+        {
+        }
+
         public override (Stats attackerState, Stats defenderState) AlterEntityState(BaseEntity attacker, BaseEntity defender)
         {
-            Console.WriteLine("Chainmail defense!!!");
+            Console.WriteLine("Eating lembda!!!");
             //calc attacker stats
             var attackerState = new Stats();
-            attackerState.DamageMitigation += BASE_DEFENSE;
+            attackerState.Health += BASE_HEALTH_BONUS;
 
             //cal defender stats
             var defenderState = new Stats();
@@ -22,6 +27,5 @@ namespace LotrDungeon.Models.AlterEntities
             
             return (attackerState,defenderState);
         }
-
     }
 }

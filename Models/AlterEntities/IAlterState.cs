@@ -6,8 +6,17 @@ using LotrDungeon.Models.Entities;
 
 namespace LotrDungeon.AlterEntities
 {
-    public interface IAlterState
+    public abstract class AlterState
     {
-        public (Stats attackerState, Stats defenderState) AlterState(BaseEntity attacker, BaseEntity defender);
+        protected int TURNS_TO_ACTIVATE {get;set;}= 0;
+        protected int TURNS_ACTIVE {get;set;} = 1;
+        public abstract (Stats attackerState, Stats defenderState) AlterEntityState(BaseEntity attacker, BaseEntity defender);
+
+        protected bool CheckIfCanUse()=> TURNS_TO_ACTIVATE == 0 && TURNS_ACTIVE >=1;
+
+        protected void ConsumeTurn(){
+            if(TURNS_ACTIVE > 0 && TURNS_TO_ACTIVATE == 0) TURNS_ACTIVE--;
+            if(TURNS_TO_ACTIVATE > 0) TURNS_TO_ACTIVATE--;
+        }
     }
 }
