@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LotrDungeon.AlterEntities;
+using LotrDungeon.Exceptions;
 using LotrDungeon.Models.AlterEntities;
 
 namespace LotrDungeon.Models.Entities
@@ -18,14 +19,21 @@ namespace LotrDungeon.Models.Entities
 
         public override int BASE_STAMINA_ATTACK => 10;
 
-        public void attack(BaseEntity enemy)
+        public override void attack(BaseWeapon baseWeapon, BaseEntity enemy)
         {
-            alterStates.Add(Weapons[0]);
+            alterStates = new(){baseWeapon};
 
             (var ourState, var enemyState) = calculateState(enemy);
+            
+            ourState.Stamina -= BASE_STAMINA_ATTACK;
+            enemyState.Damage += AttackPower + TmpState.DamageBonus + anger;
 
             if(!CheckIfCanAttack(ourState)) throw new Exception($"{Name} is too tired to attack");
-            
+            if(State.IsStun) {
+                State.IsStun = false;
+                throw new TurnException($"{Name} is stunned!");
+            };
+
             enemy.ApplyState(enemyState);
             ApplyState(ourState);
 

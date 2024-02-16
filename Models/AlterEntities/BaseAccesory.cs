@@ -11,13 +11,13 @@ namespace LotrDungeon.AlterEntities
         int quantity {get;set;} = 1;
         bool consumible {get;set;}
 
-        protected BaseAccesory(int _quantity, bool _consumible)
+        protected BaseAccesory(string _Name,int _quantity, bool _consumible) : base(_Name)
         {
             quantity = _quantity;
             consumible = _consumible;
         }
 
-        protected BaseAccesory(bool _consumible, List<BaseAccesory> _d)
+        protected BaseAccesory(string _Name, bool _consumible, List<BaseAccesory> _d) : base(_Name)
         {
             consumible = _consumible;
         }

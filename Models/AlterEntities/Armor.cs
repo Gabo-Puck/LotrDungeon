@@ -9,6 +9,10 @@ namespace LotrDungeon.Models.AlterEntities
 {
     public class Armor : BaseDefense
     {
+        public Armor(string _Name, float _BASE_DEFENSE) : base(_Name, _BASE_DEFENSE)
+        {
+        }
+
         public override (Stats attackerState, Stats defenderState) AlterEntityState(BaseEntity attacker, BaseEntity defender)
         {
             Console.WriteLine("Chainmail defense!!!");

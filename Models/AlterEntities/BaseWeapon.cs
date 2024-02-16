@@ -12,7 +12,7 @@ namespace LotrDungeon.Models.AlterEntities
         protected int PowerAttack {get;set;}
         protected int StaminaUsage {get;set;}
 
-        public BaseWeapon(int _PowerAttack, int _StaminaUsage){
+        public BaseWeapon(string _Name, int _PowerAttack, int _StaminaUsage): base(_Name){
             PowerAttack = _PowerAttack;
             StaminaUsage = _StaminaUsage;
         }

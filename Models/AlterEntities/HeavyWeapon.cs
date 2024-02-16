@@ -11,7 +11,7 @@ namespace LotrDungeon.Models.AlterEntities
     {
         int BASE_STUN_CHANCE = 3;
 
-        public HeavyWeapon(int _PowerAttack, int _StaminaUsage) : base(_PowerAttack, _StaminaUsage)
+        public HeavyWeapon(string _Name, int _PowerAttack, int _StaminaUsage) : base(_Name, _PowerAttack, _StaminaUsage)
         {
         }
 

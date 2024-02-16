@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using LotrDungeon.AlterEntities;
+using LotrDungeon.Exceptions;
 using LotrDungeon.Models.AlterEntities;
 
 namespace LotrDungeon.Models.Entities
@@ -18,20 +19,25 @@ namespace LotrDungeon.Models.Entities
         public override int BASE_STAMINA_ATTACK => 3;
         public int CRITICAL_ATTACK_DAMAGE => 2;
 
-        public void attack(BaseEntity enemy)
+        public override void attack(BaseWeapon baseWeapon, BaseEntity enemy)
         {
-            alterStates.Add(Weapons[0]);
+            alterStates = new(){baseWeapon};
 
             (var ourState, var enemyState) = calculateState(enemy);
+            ourState.Stamina -= BASE_STAMINA_ATTACK;
+            enemyState.Damage += AttackPower + TmpState.DamageBonus;
 
-            if(!CheckIfCanAttack(ourState)) throw new Exception($"{Name} is too tired to attack");
-
+            if(!CheckIfCanAttack(ourState)) throw new TurnException($"{Name} is too tired to attack");
+            if(State.IsStun) {
+                State.IsStun = false;
+                throw new TurnException($"{Name} is stunned!");
+            };
             enemyState.Damage  += isCriticalAttack() ? CRITICAL_ATTACK_DAMAGE : 0;
             
             enemy.ApplyState(enemyState);
             ApplyState(ourState);
 
-            alterStates.RemoveAll(_=>true);
+            TmpState = new Stats();
         }
 
         public bool isCriticalAttack(){

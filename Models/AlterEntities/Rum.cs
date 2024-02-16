@@ -11,7 +11,7 @@ namespace LotrDungeon.Models.AlterEntities
     {
         int BASE_DAMAGE_BONUS = 5;
         int BASE_SHIELD_BONUS = 5;
-        public Rum(int _quantity, bool _consumible) : base(_quantity, _consumible)
+        public Rum(string _Name, int _quantity, bool _consumible) : base(_Name, _quantity, _consumible)
         {
         }
 

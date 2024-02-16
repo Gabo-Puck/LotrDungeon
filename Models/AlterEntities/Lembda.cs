@@ -10,7 +10,7 @@ namespace LotrDungeon.Models.AlterEntities
     public class Lembda : BaseAccesory
     {
         int BASE_HEALTH_BONUS = 5;
-        public Lembda(int _quantity, bool _consumible) : base(_quantity, _consumible)
+        public Lembda(string _Name, int _quantity, bool _consumible) : base(_Name, _quantity, _consumible)
         {
         }
 

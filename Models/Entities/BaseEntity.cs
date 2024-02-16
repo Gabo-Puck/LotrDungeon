@@ -1,4 +1,5 @@
 using LotrDungeon.AlterEntities;
+using LotrDungeon.Exceptions;
 using LotrDungeon.Models.AlterEntities;
 
 namespace LotrDungeon.Models.Entities
@@ -9,7 +10,7 @@ namespace LotrDungeon.Models.Entities
         public Stats TmpState {get;set;} = new Stats();
         public int AttackPower {get;}
         public string Name {get;}
-        public bool IsDead {get; private set;}
+        public bool IsDead {get; private set;} = false;
         public virtual int BASE_STAMINA_ATTACK {get;} = 3;
         public virtual int BASE_HEALTH {get;} = 100;
         public virtual int BASE_STAMINA {get;} = 100;
@@ -37,37 +38,43 @@ namespace LotrDungeon.Models.Entities
             Defense = _Defense;
         }
 
-        public virtual void attack(BaseEntity enemy, BaseWeapon weapon){
+        public virtual void attack(BaseWeapon weapon, BaseEntity enemy){
+            alterStates.RemoveAll(_=>true);
             alterStates.Add(weapon);
 
             (var ourState, var enemyState) = calculateState(enemy);
             ourState.Stamina -= BASE_STAMINA_ATTACK;
             enemyState.Damage += AttackPower + TmpState.DamageBonus;
-            if(!CheckIfCanAttack(ourState)) throw new Exception($"{Name} is too tired to attack");
+            if(!CheckIfCanAttack(ourState)) {
+                throw new TurnException($"{Name} is too tired to attack");
+            };
+            if(State.IsStun) {
+                State.IsStun = false;
+                throw new TurnException($"{Name} is stunned!");
+            };
 
             // enemy.ApplyState(enemyState);
             ApplyState(ourState);
             enemy.ApplyState(enemyState);
             TmpState = new Stats();
-            alterStates.RemoveAll(_=>true);
 
         }
 
-        public virtual void defend(BaseEntity enemy, BaseDefense defense){
+        public virtual void defend(BaseDefense defense, BaseEntity enemy){
+            alterStates.RemoveAll(_=>true);
             alterStates.Add(defense);
             (var ourState, var enemyState) = calculateState(enemy);
             getRested(BASE_STAMINA_ATTACK);
             TmpState = ourState;
-            alterStates.RemoveAll(_=>true);
         }
 
-        public virtual void consume(BaseEntity enemy, BaseAccesory accesory){
+        public virtual void consume(BaseAccesory accesory, BaseEntity enemy){
+            alterStates.RemoveAll(_=>true);
             alterStates.Add(accesory);
             (var ourState, var enemyState) = calculateState(enemy);
             ApplyState(ourState);
             accesory.Consume();
             if(!accesory.CheckIfAny()) Accesories.Remove(accesory);
-            alterStates.RemoveAll(_=>true);
 
         }
 

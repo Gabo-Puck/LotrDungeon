@@ -13,7 +13,7 @@ namespace LotrDungeon.Models.AlterEntities
         int BASE_CRITIC_DAMAGE = 3;
         int CONSECUTIVE_ATTACKS = 2;
 
-        public LightWeapon(int _PowerAttack, int _StaminaUsage) : base(_PowerAttack, _StaminaUsage)
+        public LightWeapon(string _Name, int _PowerAttack, int _StaminaUsage) : base(_Name, _PowerAttack, _StaminaUsage)
         {
         }
 
