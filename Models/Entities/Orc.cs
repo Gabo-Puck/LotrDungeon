@@ -10,6 +10,7 @@ namespace LotrDungeon.Models.Entities
 {
     public class Orc : BaseEntity
     {
+        public override string Classifier => "Orc";
         int anger {get;set;} = 0;
         int MAX_ANGER = 5;
 

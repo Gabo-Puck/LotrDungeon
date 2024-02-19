@@ -4,7 +4,7 @@ using LotrDungeon.Models.AlterEntities;
 
 namespace LotrDungeon.Models.Entities
 {
-    public abstract class BaseEntity
+    public abstract class BaseEntity : AlterState
     {
         public Stats State {get;set;} = new Stats();
         public Stats TmpState {get;set;} = new Stats();
@@ -27,7 +27,7 @@ namespace LotrDungeon.Models.Entities
             List<BaseAccesory> _Accesories,
             List<BaseWeapon> _Weapons,
             List<BaseDefense> _Defense
-            ){
+            ) : base(_Name){
             Name = _Name;
             AttackPower = _Attack;
             State.Defense = _DefenseStat;
@@ -158,13 +158,17 @@ namespace LotrDungeon.Models.Entities
             _damage -= calcDefense();
             if(_damage < 0 ) _damage = 0;
 
-            if(_damage>State.Health){
+            if(_damage>=State.Health){
                 State.Health = 0;
                 IsDead = true;
             }else
                 State.Health -= _damage;
 
             return State.Health;
+        }
+        public override (Stats attackerState, Stats defenderState) AlterEntityState(BaseEntity attacker, BaseEntity defender)
+        {
+            throw new NotImplementedException();
         }
         public virtual void printStats(){
             if(IsDead)

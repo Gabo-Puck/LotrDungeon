@@ -1,16 +1,66 @@
 using LotrDungeon.AlterEntities;
 using LotrDungeon.Exceptions;
+using LotrDungeon.Factories;
 using LotrDungeon.Menu;
 using LotrDungeon.Models.AlterEntities;
 using LotrDungeon.Models.Entities;
-
+using System.Collections;
+using System.Collections.Concurrent;
+using System.Diagnostics;
+using System.Timers;
 namespace LotrDungeon
 {
-    static public class MenuHandler{
-        static MenuOption Accesories = new("Pick an accesory", PickAccesory);
-        static MenuOption Weapons = new("Pick a weapon", PickWeapon);
-        static MenuOption Defense = new("Pick a defense", PickDefense);
-        static int HandleInput(){
+    public class MenuHandler{
+        Game game;
+        MenuOption<AlterState> Accesories;
+        MenuOption<AlterState> Weapons;
+        MenuOption<AlterState> Defenses;
+        OnlyViewOption<AlterState> Enemies;
+        MenuOption<AlterState> InitialMenu;
+        LeaveOption<AlterState> LeaveOption;
+        public MenuHandler(Game _game){
+            UpdateOptions(_game);
+        }
+
+        public void UpdateOptions(Game _game){
+            game = _game;
+            InitialMenu = new MenuOption<AlterState>();
+            LeaveOption = new LeaveOption<AlterState>("Leave",null,InitialMenu);
+            Accesories = InitMenuOptions("Pick an accesory", game.player.Accesories);
+            Defenses = InitMenuOptions("Pick a defense", game.player.Defense);
+            Weapons = InitMenuOptions("Pick a weapon", game.player.Weapons);
+            Enemies = InitViewOnlyOptions("Scout enemies", game.EnemiesLeft, InitialMenu);
+            var List = new List<BaseMenuOption<AlterState>>();
+            List.Add(Weapons);
+            List.Add(Defenses);
+            List.Add(Accesories);
+            List.Add(Enemies);
+            InitialMenu.menuOptions = List;
+        }
+        private MenuOption<AlterState> InitMenuOptions(string Text, IEnumerable<AlterState> options){
+            var menuOptions = new List<BaseMenuOption<AlterState>>();
+            foreach(var accesories in options){
+                menuOptions.Add((
+                    new MenuOption<AlterState>(accesories.Name, accesories,[])
+                ));
+            }
+            menuOptions.Add(LeaveOption);
+            var option = new MenuOption<AlterState>(Text ,null, menuOptions);
+            return option;
+        }
+        private OnlyViewOption<AlterState> InitViewOnlyOptions(string Text, IEnumerable<AlterState> options, BaseMenuOption<AlterState> next){
+            var menuOptions = new List<BaseMenuOption<AlterState>>();
+            int index = 0;
+            foreach(var accesories in options){
+                menuOptions.Add((
+                    new OnlyViewOption<AlterState>($"{accesories.Name} ({accesories.Classifier}) {(index== 0 ?"- Current":"")}", null, [], next)
+                ));
+                index++;
+            }
+            var option = new OnlyViewOption<AlterState>(Text ,null, menuOptions, next);
+            return option;
+        }
+        int HandleInput(){
             try{
                 string? input = Console.ReadLine();
                 return Int32.Parse(input);
@@ -20,96 +70,40 @@ namespace LotrDungeon
             }
         }
 
-        static bool IsValidOption(int index, List<MenuOption> options){
-            return index>=0 && index<=options.Count;
-        }
-
-        static void PrintMenuOption(int index, MenuOption option){
-            Console.WriteLine($@"{index}) {option.Text}");
-        }
-        static void PrintMenu(List<MenuOption> options){
-            for (int i = 0; i < options.Count; i++)
-            {
-                PrintMenuOption(i+1,options[i]);
-            }
-        }
-        static BaseWeapon PickWeapon(BaseEntity entity){
-            List<MenuOption> options = new();
-            entity.Weapons.ForEach(w=>
-                options.Add(
-                    new(w.Name,null)
-                )
-            );
-            options.Add(new("Leave",null));
-            int input = -1;
-            do{
-                PrintMenu(options);
-                input = HandleInput();
-            }while(!IsValidOption(input,options));
-            if(input==options.Count) return null;
-            return entity.Weapons[input - 1];
-        }
-        static object PickDefense(BaseEntity entity){
-            List<MenuOption> options = new();
-            entity.Defense.ForEach(w=>
-                options.Add(
-                    new(w.Name,null)
-                )
-            );
-            options.Add(new("Leave",null));
-            int input = -1;
-            do{
-                PrintMenu(options);
-                input = HandleInput();
-            }while(!IsValidOption(input,options));
-            if(input==options.Count) return null;
-            return entity.Defense[input - 1];
-        }
-        static object PickAccesory(BaseEntity entity){
-            List<MenuOption> options = new();
-            entity.Accesories.ForEach(w=>
-                options.Add(
-                    new(w.Name,null)
-                )
-            );
-            options.Add(new("Leave",null));
-            int input = -1;
-            do{
-                PrintMenu(options);
-                input = HandleInput();
-            }while(!IsValidOption(input,options));
-            if(input==options.Count) return null;
-            return entity.Accesories[input - 1];
-        }
-        public static object PickAction(BaseEntity entity)
+        public object PickAction(IEnumerable<BaseEntity> EnemiesLeft)
         {
-            List<MenuOption> options = new(){
-                Weapons,
-                Defense,
-                Accesories,
-            };
             int input = -1;
             object result = null;
+            BaseMenuOption<AlterState> actualOption = InitialMenu;
             while(result == null){
-                do{
-                    PrintMenu(options);
-                    input = HandleInput();
-                }while(!IsValidOption(input,options));
-                result = options[input - 1].Func(entity);
+                actualOption.PrintOption();
+                input = HandleInput();
+                try{
+                    actualOption = actualOption.GoNext(input - 1);
+                    actualOption = actualOption.DoProcess();
+                }catch(Exception ex){
+                    Console.WriteLine(ex.Message);
+                }
+                if(actualOption.Value != null)
+                    result = actualOption.Value;
             }
             return result;
         }
     }
     public class Game
     {
+        /// <summary>
+        /// Enemy spawn rate in seconds
+        /// </summary>
+        static double ENEMY_SPAWN_RATE = 5;
         int STAMINA_THRESHOLD = 50;
-        Human player = new Human("Boromir",12,100,100,10,
+        public Human player = new Human("Boromir",12,100,1,10,
         new(){
-            new Lembda("Lembda",10,true),
+            new Lembda("Lembda",3,true),
             new Rum("Rum",10,true)
         },
         new(){
-            new HeavyWeapon("Mace",10,10),
+            new HeavyWeapon("Mace",1000,10),
             new LightWeapon("Knife",10,10)
             },
         new(){
@@ -117,16 +111,27 @@ namespace LotrDungeon
             new Shield("Oak Shield",10)
         }
         );
-        BaseEntity? CurrentEnemy = new Orc("Poncho",10,100,100,10,[],[],[]);
-        Stack<BaseEntity> EnemiesLeft = new();
+        
+        MenuHandler menu;
+        BaseEntity? CurrentEnemy = new Orc("Poncho",30,100,100,10,[],[],[]);
+        public Queue<BaseEntity> EnemiesLeft = new();
         bool PlayerTurn {get;set;} = true;
-        bool IsGameOver()=>EnemiesLeft.Count==0&&CurrentEnemy!=null&&CurrentEnemy.IsDead;
+
+        public Game(){
+            menu = new MenuHandler(this);
+            EnemiesLeft.Enqueue(CurrentEnemy);
+        }
+
+        bool IsGameOver()=>EnemiesLeft.Count==0&&CurrentEnemy!=null&&CurrentEnemy.IsDead||player.IsDead;
 
         void PullOutEnemy(){
-            CurrentEnemy = EnemiesLeft.Take(1).First();
+            if(EnemiesLeft.TryDequeue(out BaseEntity? e)&&EnemiesLeft.TryPeek(out BaseEntity? currentEnemy)){
+                CurrentEnemy = currentEnemy;
+            }
         }
 
         void Think(){
+            PlayerTurn = true;
             if(CurrentEnemy.State.Stamina<STAMINA_THRESHOLD)
             {
                 CurrentEnemy.defend(new Shield("Shield",20), player);
@@ -134,35 +139,80 @@ namespace LotrDungeon
             }
             CurrentEnemy.attack(new HeavyWeapon("Mace",10,10), player);
         }
-
-        public void Run(){
-            while(!IsGameOver()){
-                try{
-                if(!PlayerTurn){
-                    Think();
-                    PlayerTurn = !PlayerTurn;
+        void HandlePlayerTurn(){
+                Console.WriteLine($"You are fighting: {CurrentEnemy.Name} ({CurrentEnemy.Classifier})");
+                AlterState? action = (AlterState?)menu.PickAction(EnemiesLeft);
+                if(action is BaseAccesory){
+                    player.consume((BaseAccesory)action, CurrentEnemy);                   
+                    PlayerTurn = true;
+                    return;
                 }
-                AlterState? action = (AlterState?)MenuHandler.PickAction(player);
                 if(action is BaseWeapon){
                     player.attack((BaseWeapon)action, CurrentEnemy);
                 }
                 if(action is BaseDefense){
                     player.defend((BaseDefense)action, CurrentEnemy);
+                }
+                PlayerTurn = false;
+        }
 
+        private void SpawnEnemies(int amount){
+            BaseEntitiesFactory factory = new();
+            var entity = factory.GenerateEntities(amount);
+            foreach (var item in entity)
+            {
+                EnemiesLeft.Enqueue(item);
+            }
+        }
+
+        private int CalcEnemies(double seconds){
+            double enemies = seconds/ENEMY_SPAWN_RATE;
+            return (int)enemies;
+        }
+
+
+        public void Run(){
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            bool RestartCount = false;
+            while(!IsGameOver()){
+                if(RestartCount){
+                    stopwatch.Restart();
+                    RestartCount = false;
                 }
-                if(action is BaseAccesory){
-                    player.consume((BaseAccesory)action, CurrentEnemy);                   
-                    PlayerTurn = !PlayerTurn;
+                try{
+                if(!PlayerTurn){
+                    Think();
+                }else{
+                    HandlePlayerTurn();
                 }
+                
                 }catch(Exception ex){
                     if(ex is TurnException)
                         Console.WriteLine(ex.Message);
                     else
                         Console.WriteLine(ex);
                 }finally{
-                    PlayerTurn = !PlayerTurn;
+                    if(CurrentEnemy.IsDead){
+                        stopwatch.Stop();
+                        int enemies = CalcEnemies(stopwatch.Elapsed.TotalSeconds);
+                        Console.WriteLine($"You have killed: {CurrentEnemy.Name}!");
+                        Console.WriteLine($"Have appeared: {enemies} enemies");
+                        SpawnEnemies(enemies);
+                        PullOutEnemy();
+                        RestartCount = true;
+                    }
+                menu.UpdateOptions(this);
                 }
             }
+            if(player.IsDead){
+                Console.WriteLine("The hero has fallen...");
+                return;
+            }
+            if(EnemiesLeft.Count == 0){
+                Console.WriteLine("You won!");
+                return;
+            }
+            Console.WriteLine("We've won, but at what cost...");
         }
     }
 }
