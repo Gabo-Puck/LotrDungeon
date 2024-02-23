@@ -6,11 +6,18 @@ using LotrDungeon.Models.Entities;
 
 namespace LotrDungeon.Factories
 {
-    public class OrcCreator : Creator<BaseEntity>
+    public class OrcCreator : BaseEntityCreator
     {
+        protected override List<string> Names {get;} = new (){
+            "Boldog",
+            "Azog",
+            "Gorgun"
+        };
+
         public override Orc FactoryMethod()
         {
-            return new Orc("Test",10,10,10,10,[],[],[]);
+            var basicStats = GetBasicStats();
+            return new Orc(PickName(),basicStats,[],[],[]);
         }
     }
 }

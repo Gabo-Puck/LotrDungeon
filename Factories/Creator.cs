@@ -7,7 +7,6 @@ namespace LotrDungeon.Factories
 {
     public abstract class Creator<T>
     {
-        public int x {get;set;}
         public abstract T FactoryMethod();
 
     }

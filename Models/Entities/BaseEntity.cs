@@ -37,6 +37,22 @@ namespace LotrDungeon.Models.Entities
             Weapons =_Weapons;
             Defense = _Defense;
         }
+        public BaseEntity(
+            string _Name,
+            Stats basicStats,
+            List<BaseAccesory> _Accesories,
+            List<BaseWeapon> _Weapons,
+            List<BaseDefense> _Defense
+            ) : base(_Name){
+            Name = _Name;
+            AttackPower = basicStats.Damage;
+            State.Defense = basicStats.Defense;
+            State.Stamina = basicStats.Stamina;
+            State.Health = basicStats.Health;
+            Accesories =_Accesories;
+            Weapons =_Weapons;
+            Defense = _Defense;
+        }
 
         public virtual void attack(BaseWeapon weapon, BaseEntity enemy){
             alterStates.RemoveAll(_=>true);

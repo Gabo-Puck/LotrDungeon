@@ -97,7 +97,7 @@ namespace LotrDungeon
         /// </summary>
         static double ENEMY_SPAWN_RATE = 5;
         int STAMINA_THRESHOLD = 50;
-        public Human player = new Human("Boromir",12,100,1,10,
+        public Human player = new Human("Boromir",12,100,100,10,
         new(){
             new Lembda("Lembda",3,true),
             new Rum("Rum",10,true)
@@ -157,7 +157,7 @@ namespace LotrDungeon
         }
 
         private void SpawnEnemies(int amount){
-            BaseEntitiesFactory factory = new();
+            EntitiesFactory<BaseEntityCreator, BaseEntity> factory = new();
             var entity = factory.GenerateEntities(amount);
             foreach (var item in entity)
             {
@@ -187,8 +187,10 @@ namespace LotrDungeon
                 }
                 
                 }catch(Exception ex){
-                    if(ex is TurnException)
+                    if(ex is TurnException){
                         Console.WriteLine(ex.Message);
+                        PlayerTurn = !PlayerTurn;
+                    }
                     else
                         Console.WriteLine(ex);
                 }finally{
