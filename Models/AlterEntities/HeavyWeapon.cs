@@ -30,5 +30,12 @@ namespace LotrDungeon.Models.AlterEntities
         }
 
         bool IsPowerfulEnough() => Randomize.IsRNG(BASE_STUN_CHANCE,BASE_STUN_CHANCE+4);
+
+        
+        public override string ToString()
+        {
+            return @$"{base.ToString()}
+                Stun change: {BASE_STUN_CHANCE}";
+        }
     }
 }

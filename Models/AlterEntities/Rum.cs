@@ -29,5 +29,12 @@ namespace LotrDungeon.Models.AlterEntities
             
             return (attackerState,defenderState);
         }
+
+        public override string ToString()
+        {
+            return @$"{base.ToString()}
+                Damage Bonus: {BASE_DAMAGE_BONUS}
+                Defense debuff: {BASE_SHIELD_BONUS}";
+        }
     }
 }

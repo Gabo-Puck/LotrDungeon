@@ -16,5 +16,13 @@ namespace LotrDungeon.Models.AlterEntities
             PowerAttack = _PowerAttack;
             StaminaUsage = _StaminaUsage;
         }
+
+        public override string ToString()
+        {
+            string stat = @$"{base.ToString()}
+                Power attack: {PowerAttack}
+                Stamina usage: {StaminaUsage}";
+            return stat;
+        }
     }
 }

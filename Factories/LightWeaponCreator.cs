@@ -8,21 +8,21 @@ using LotrDungeon.Models.Entities;
 
 namespace LotrDungeon.Factories
 {
-    public class HeavyWeaponCreator : Creator<HeavyWeapon>
+    public class LightWeaponCreator : Creator<LightWeapon>
     {
         protected override int MAX_STAMINA => 20;
         protected override int MIN_STAMINA => 13;
         protected override int MAX_ATTACK => 30;
         protected override int MIN_ATTACK => 20;
         protected override List<string> Names {get;} = new(){
-            "Mace",
-            "Axe",
+            "Knife",
+            "Dagger",
         };
 
-        public override HeavyWeapon FactoryMethod()
+        public override LightWeapon FactoryMethod()
         {
             Stats basicStats = GetBasicStats();
-            return new HeavyWeapon(PickName(), basicStats.Damage, basicStats.Stamina);
+            return new LightWeapon(PickName(), basicStats.Damage, basicStats.Stamina);
         }
     }
 }

@@ -16,6 +16,7 @@ namespace LotrDungeon
         MenuOption<AlterState> Weapons;
         MenuOption<AlterState> Defenses;
         OnlyViewOption<AlterState> Enemies;
+        OnlyViewOption<AlterState> CheckStats;
         MenuOption<AlterState> InitialMenu;
         LeaveOption<AlterState> LeaveOption;
         public MenuHandler(Game _game){
@@ -30,19 +31,32 @@ namespace LotrDungeon
             Defenses = InitMenuOptions("Pick a defense", game.player.Defense);
             Weapons = InitMenuOptions("Pick a weapon", game.player.Weapons);
             Enemies = InitViewOnlyOptions("Scout enemies", game.EnemiesLeft, InitialMenu);
+            CheckStats = new("Stats", null, [
+                new OnlyViewOption<AlterState>(game.player.ToString(),null,[],InitialMenu)
+            ], InitialMenu);
             var List = new List<BaseMenuOption<AlterState>>();
             List.Add(Weapons);
             List.Add(Defenses);
             List.Add(Accesories);
             List.Add(Enemies);
+            List.Add(CheckStats);
             InitialMenu.menuOptions = List;
         }
         private MenuOption<AlterState> InitMenuOptions(string Text, IEnumerable<AlterState> options){
             var menuOptions = new List<BaseMenuOption<AlterState>>();
             foreach(var accesories in options){
-                menuOptions.Add((
-                    new MenuOption<AlterState>(accesories.Name, accesories,[])
-                ));
+                MenuOption<AlterState> x = new();
+                var n = new List<BaseMenuOption<AlterState>>(){
+                    new MenuOption<AlterState>("Use", accesories, []),
+                    new OnlyViewOption<AlterState>("Stats", null, [
+                        new OnlyViewOption<AlterState>(accesories.ToString(),null,[], x)
+                    ], x),
+                    LeaveOption
+                };
+                x.Text = accesories.Name;
+                x.Value = null;
+                x.menuOptions = n;
+                menuOptions.Add(x);
             }
             menuOptions.Add(LeaveOption);
             var option = new MenuOption<AlterState>(Text ,null, menuOptions);
@@ -113,13 +127,16 @@ namespace LotrDungeon
         );
         
         MenuHandler menu;
-        BaseEntity? CurrentEnemy = new Orc("Poncho",30,100,100,10,[],[],[]);
+        BaseEntity? CurrentEnemy;
         public Queue<BaseEntity> EnemiesLeft = new();
         bool PlayerTurn {get;set;} = true;
 
         public Game(){
             menu = new MenuHandler(this);
-            EnemiesLeft.Enqueue(CurrentEnemy);
+            var factory = new EntitiesFactory<BaseEntity>();
+            BaseEntity _CurrentEnemy = factory.GenerateEntity();
+            EnemiesLeft.Enqueue(_CurrentEnemy);
+            CurrentEnemy = EnemiesLeft.Peek();
         }
 
         bool IsGameOver()=>EnemiesLeft.Count==0&&CurrentEnemy!=null&&CurrentEnemy.IsDead||player.IsDead;
@@ -132,12 +149,13 @@ namespace LotrDungeon
 
         void Think(){
             PlayerTurn = true;
+            Console.WriteLine($"{CurrentEnemy.Name} - ({CurrentEnemy.Classifier}) turn");
             if(CurrentEnemy.State.Stamina<STAMINA_THRESHOLD)
             {
-                CurrentEnemy.defend(new Shield("Shield",20), player);
+                CurrentEnemy.defend(CurrentEnemy.Defense[0], player);
                 return;
             }
-            CurrentEnemy.attack(new HeavyWeapon("Mace",10,10), player);
+            CurrentEnemy.attack(CurrentEnemy.Weapons[0], player);
         }
         void HandlePlayerTurn(){
                 Console.WriteLine($"You are fighting: {CurrentEnemy.Name} ({CurrentEnemy.Classifier})");
@@ -147,6 +165,7 @@ namespace LotrDungeon
                     PlayerTurn = true;
                     return;
                 }
+                Console.WriteLine("Your turn");
                 if(action is BaseWeapon){
                     player.attack((BaseWeapon)action, CurrentEnemy);
                 }
@@ -157,7 +176,7 @@ namespace LotrDungeon
         }
 
         private void SpawnEnemies(int amount){
-            EntitiesFactory<BaseEntityCreator, BaseEntity> factory = new();
+            EntitiesFactory<BaseEntity> factory = new();
             var entity = factory.GenerateEntities(amount);
             foreach (var item in entity)
             {

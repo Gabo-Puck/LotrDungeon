@@ -26,5 +26,12 @@ namespace LotrDungeon.Models.AlterEntities
             
             return (attackerState,defenderState);
         }
+
+        
+        public override string ToString()
+        {
+            return @$"{base.ToString()}";
+        }
+
     }
 }

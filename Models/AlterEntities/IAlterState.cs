@@ -22,5 +22,15 @@ namespace LotrDungeon.AlterEntities
         public AlterState(string _Name){
             Name = _Name;
         }
+
+        public virtual void PrintStats(){
+            Console.WriteLine(this);
+        }
+        
+        public override string ToString()
+        {
+            return @$"
+                {Name}";
+        }
     }
 }

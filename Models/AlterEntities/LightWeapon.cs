@@ -38,5 +38,13 @@ namespace LotrDungeon.Models.AlterEntities
         }
         bool IsCriticAttack() => Randomize.IsRNG(BASE_CRITIC_CHANCE,BASE_CRITIC_CHANCE+4);
 
+
+        public override string ToString()
+        {
+            return @$"{base.ToString()}
+                Critic chance: {BASE_CRITIC_CHANCE}
+                Critic damage: {BASE_CRITIC_DAMAGE}
+                Consecutive attacks: {CONSECUTIVE_ATTACKS}";
+        }
     }
 }

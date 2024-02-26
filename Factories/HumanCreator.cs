@@ -7,7 +7,7 @@ using LotrDungeon.Models.Entities;
 
 namespace LotrDungeon.Factories
 {
-    public class HumanCreator : BaseEntityCreator
+    public class HumanCreator : Creator<Human>
     {
         protected override List<string> Names {get;} = new(){
             "Boromir",
@@ -17,10 +17,15 @@ namespace LotrDungeon.Factories
         };
         public override Human FactoryMethod()
         {
+
             var basicStats = GetBasicStats();
-            EntitiesFactory<BaseAlterStateCreator<BaseWeapon>,BaseWeapon> factory = new();
-            var x = factory.GenerateEntity();
-            return new Human(PickName(),basicStats,[],[],[]);
+            EntitiesFactory<BaseWeapon> heavyFactory = new();
+
+            BaseWeapon weapon = heavyFactory.GenerateEntity();
+            EntitiesFactory<BaseDefense> baseFactory = new();
+
+            BaseDefense defense = baseFactory.GenerateEntity();
+            return new Human(PickName(),basicStats,[],[weapon],[defense]);
         }
     }
 }

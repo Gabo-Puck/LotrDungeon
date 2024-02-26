@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LotrDungeon.Models.AlterEntities;
 using LotrDungeon.Models.Entities;
 
 namespace LotrDungeon.Factories
 {
-    public class OrcCreator : BaseEntityCreator
+    public class OrcCreator : Creator<Orc>
     {
         protected override List<string> Names {get;} = new (){
             "Boldog",
@@ -16,8 +17,15 @@ namespace LotrDungeon.Factories
 
         public override Orc FactoryMethod()
         {
+            
             var basicStats = GetBasicStats();
-            return new Orc(PickName(),basicStats,[],[],[]);
+            EntitiesFactory<HeavyWeapon> heavyFactory = new();
+            
+            HeavyWeapon weapon = heavyFactory.GenerateEntity();
+            EntitiesFactory<Armor> baseFactory = new();
+            
+            BaseDefense defense = baseFactory.GenerateEntity();
+            return new Orc(PickName(),basicStats,[],[weapon],[defense]);
         }
     }
 }

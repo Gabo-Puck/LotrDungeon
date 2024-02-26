@@ -14,5 +14,12 @@ namespace LotrDungeon.Models.AlterEntities
             BASE_DEFENSE = _BASE_DEFENSE;
         }
         public override abstract (Stats attackerState, Stats defenderState) AlterEntityState(BaseEntity attacker, BaseEntity defender);
+
+        
+        public override string ToString()
+        {
+            return @$"{base.ToString()}
+                Defense Points: {BASE_DEFENSE}";
+        }
     }
 }

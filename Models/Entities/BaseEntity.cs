@@ -129,7 +129,19 @@ namespace LotrDungeon.Models.Entities
             recieveHealth(state.Health);
             recieveDamageBonus(state.DamageBonus);
             State.IsStun = state.IsStun;
-            printStats();
+            PrintStats();
+        }
+
+        public override string ToString()
+        {
+            string stat = "";
+            if(IsDead)
+                stat += $@"{Name} is already dead!";
+            stat += @$"
+                {Name}
+                {State}
+            ";
+            return stat;
         }
 
         protected virtual void recieveDamageBonus(int _damageBonus){
@@ -186,14 +198,7 @@ namespace LotrDungeon.Models.Entities
         {
             throw new NotImplementedException();
         }
-        public virtual void printStats(){
-            if(IsDead)
-                Console.WriteLine($@"{Name} is already dead!");
-
-            Console.WriteLine(@$"
-                {Name}
-                {State}
-            ");
-        }
+        
     }
+    
 }
