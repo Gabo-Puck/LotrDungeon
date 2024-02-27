@@ -104,6 +104,66 @@ namespace LotrDungeon
             return result;
         }
     }
+    
+    public class MenuPickCharacter{
+        const int OPTIONS = 10;
+        MenuOption<BaseEntity> Options;
+        public MenuPickCharacter(){
+            EntitiesFactory<BaseEntity> entitiesFactory = new();
+            MenuOption<BaseEntity> menuOption = new();
+            List<MenuOption<BaseEntity>> menuOptions = new();
+            Options = menuOption;
+            List<BaseEntity> entities = (List<BaseEntity>)entitiesFactory.GenerateEntities(OPTIONS);
+            foreach(BaseEntity entity in  entities){
+                MenuOption<BaseEntity> option = new();
+                option.Text = $"{entity.Name} - ({entity.Classifier})";
+                option.Value = null;
+                option.menuOptions = new List<BaseMenuOption<BaseEntity>>(){
+                    new MenuOption<BaseEntity>("Use",entity,[]),
+                    new OnlyViewOption<BaseEntity>("Stats",null,[
+                        new OnlyViewOption<BaseEntity>(entity.ToString(),null,[],option)
+                    ],option),
+                    new LeaveOption<BaseEntity>("Leave",null, Options)
+                };
+                menuOptions.Add(option);
+            }
+            menuOption.Text = "";
+            menuOption.menuOptions = menuOptions;
+
+        }
+
+
+        int HandleInput(){
+            try{
+                string? input = Console.ReadLine();
+                return Int32.Parse(input);
+            }catch(Exception){
+                Console.WriteLine("Invalid option");
+                return -1;
+            }
+        }
+
+        public BaseEntity PickAction()
+        {
+            int input = -1;
+            BaseEntity result = null;
+            BaseMenuOption<BaseEntity> actualOption = Options;
+            while(result == null){
+                actualOption.PrintOption();
+                input = HandleInput();
+                try{
+                    actualOption = actualOption.GoNext(input - 1);
+                    actualOption = actualOption.DoProcess();
+                }catch(Exception ex){
+                    Console.WriteLine(ex.Message);
+                }
+                if(actualOption.Value != null)
+                    result = actualOption.Value;
+            }
+            return result;
+        }
+    }
+    
     public class Game
     {
         /// <summary>
@@ -111,32 +171,23 @@ namespace LotrDungeon
         /// </summary>
         static double ENEMY_SPAWN_RATE = 5;
         int STAMINA_THRESHOLD = 50;
-        public Human player = new Human("Boromir",12,100,100,10,
-        new(){
-            new Lembda("Lembda",3,true),
-            new Rum("Rum",10,true)
-        },
-        new(){
-            new HeavyWeapon("Mace",1000,10),
-            new LightWeapon("Knife",10,10)
-            },
-        new(){
-            new Armor("Mithril Chainmail",0.2f),
-            new Shield("Oak Shield",10)
-        }
-        );
+        public BaseEntity player;
         
         MenuHandler menu;
+        MenuPickCharacter menuPickCharacter;
         BaseEntity? CurrentEnemy;
         public Queue<BaseEntity> EnemiesLeft = new();
         bool PlayerTurn {get;set;} = true;
 
         public Game(){
-            menu = new MenuHandler(this);
+            menuPickCharacter = new MenuPickCharacter();
+            BaseEntity _player = menuPickCharacter.PickAction();
+            player = _player;
             var factory = new EntitiesFactory<BaseEntity>();
             BaseEntity _CurrentEnemy = factory.GenerateEntity();
             EnemiesLeft.Enqueue(_CurrentEnemy);
             CurrentEnemy = EnemiesLeft.Peek();
+            menu = new MenuHandler(this);
         }
 
         bool IsGameOver()=>EnemiesLeft.Count==0&&CurrentEnemy!=null&&CurrentEnemy.IsDead||player.IsDead;
