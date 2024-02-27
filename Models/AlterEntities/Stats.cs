@@ -16,8 +16,7 @@ namespace LotrDungeon.AlterEntities
                 Health: {Health}
                 Stamina: {Stamina}
                 Defense: {Defense}
-                Stun: {IsStun}
-            ";
+                Stun: {IsStun}";
         }
         public void sum(Stats stats){
             Stamina += stats.Stamina;

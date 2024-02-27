@@ -9,6 +9,7 @@ namespace LotrDungeon.Models.AlterEntities
 {
     public class HeavyWeapon : BaseWeapon
     {
+        public override string Classifier => "Heavy Weapon";
         int BASE_STUN_CHANCE = 3;
 
         public HeavyWeapon(string _Name, int _PowerAttack, int _StaminaUsage) : base(_Name, _PowerAttack, _StaminaUsage)

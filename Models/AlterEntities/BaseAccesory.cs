@@ -8,6 +8,7 @@ namespace LotrDungeon.AlterEntities
 {
     public abstract class BaseAccesory : AlterState
     {
+        public override string Classifier => "Accesory";
         protected int Quantity {get;set;} = 1;
         bool consumible {get;set;}
 

@@ -121,7 +121,8 @@ namespace LotrDungeon
                 option.menuOptions = new List<BaseMenuOption<BaseEntity>>(){
                     new MenuOption<BaseEntity>("Use",entity,[]),
                     new OnlyViewOption<BaseEntity>("Stats",null,[
-                        new OnlyViewOption<BaseEntity>(entity.ToString(),null,[],option)
+                        new OnlyViewOption<BaseEntity>($@"{entity}
+                        {entity.PrintItems()}",null,[],option)
                     ],option),
                     new LeaveOption<BaseEntity>("Leave",null, Options)
                 };
@@ -259,7 +260,6 @@ namespace LotrDungeon
                 }catch(Exception ex){
                     if(ex is TurnException){
                         Console.WriteLine(ex.Message);
-                        PlayerTurn = !PlayerTurn;
                     }
                     else
                         Console.WriteLine(ex);

@@ -1,3 +1,4 @@
+using System.Linq;
 using LotrDungeon.AlterEntities;
 using LotrDungeon.Exceptions;
 using LotrDungeon.Models.AlterEntities;
@@ -69,7 +70,6 @@ namespace LotrDungeon.Models.Entities
                 throw new TurnException($"{Name} is stunned!");
             };
 
-            // enemy.ApplyState(enemyState);
             ApplyState(ourState);
             enemy.ApplyState(enemyState);
             TmpState = new Stats();
@@ -138,10 +138,31 @@ namespace LotrDungeon.Models.Entities
             if(IsDead)
                 stat += $@"{Name} is already dead!";
             stat += @$"
-                {Name}
-                {State}
-            ";
+                {base.ToString()}
+                {State}";
             return stat;
+        }
+
+        public string PrintItems(){
+            string itemsAccesories = PrintItemList(Accesories);
+            string itemsWeapons = PrintItemList(Weapons);
+            string itemsDefense = PrintItemList(Defense);
+            var item = @$"
+                Items
+            {itemsWeapons}
+            {itemsDefense}
+            {itemsAccesories}
+            ";
+            return item;
+        }
+
+        string PrintItemList(IEnumerable<AlterState> alterStates){
+            string itemsAccesories = $@"";
+            foreach (var item in alterStates)
+            {
+                itemsAccesories += $@"{item}";
+            }
+            return itemsAccesories;
         }
 
         protected virtual void recieveDamageBonus(int _damageBonus){

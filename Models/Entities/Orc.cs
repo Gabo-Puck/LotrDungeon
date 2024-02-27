@@ -45,6 +45,12 @@ namespace LotrDungeon.Models.Entities
 
         }
 
+        public override string ToString()
+        {
+            return @$"{base.ToString()}
+                Anger: {anger}";
+        }
+
         public void setAnger(int _anger){
             if(anger >= MAX_ANGER)
                 anger = MAX_ANGER;

@@ -30,7 +30,7 @@ namespace LotrDungeon.AlterEntities
         public override string ToString()
         {
             return @$"
-                {Name}";
+                {Name} - ({Classifier})";
         }
     }
 }

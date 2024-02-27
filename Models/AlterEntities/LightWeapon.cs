@@ -9,6 +9,8 @@ namespace LotrDungeon.Models.AlterEntities
 {
     public class LightWeapon : BaseWeapon
     {
+        public override string Classifier => "Light Weapon";
+
         int BASE_CRITIC_CHANCE = 3;
         int BASE_CRITIC_DAMAGE = 3;
         int CONSECUTIVE_ATTACKS = 2;

@@ -9,6 +9,7 @@ namespace LotrDungeon.Models.AlterEntities
 {
     public class Shield : BaseDefense
     {
+        public override string Classifier => "Shield";
         public Shield(string _Name, float _BASE_DEFENSE) : base(_Name, _BASE_DEFENSE)
         {
         }

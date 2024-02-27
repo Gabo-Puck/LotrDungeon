@@ -9,6 +9,8 @@ namespace LotrDungeon.Models.AlterEntities
 {
     public class Armor : BaseDefense
     {
+        public override string Classifier => "Armor";
+
         public Armor(string _Name, float _BASE_DEFENSE) : base(_Name, _BASE_DEFENSE)
         {
         }

@@ -9,6 +9,7 @@ namespace LotrDungeon.Models.AlterEntities
 {
     public class Rum : BaseAccesory
     {
+        public override string Classifier => "Rum";
         int BASE_DAMAGE_BONUS = 5;
         int BASE_SHIELD_BONUS = 5;
         public Rum(string _Name, int _quantity, bool _consumible) : base(_Name, _quantity, _consumible)

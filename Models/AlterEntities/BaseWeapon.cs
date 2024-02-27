@@ -9,6 +9,7 @@ namespace LotrDungeon.Models.AlterEntities
 {
     public abstract class BaseWeapon : AlterState
     {
+        public override string Classifier => "Weapon";
         protected int PowerAttack {get;set;}
         protected int StaminaUsage {get;set;}
 
