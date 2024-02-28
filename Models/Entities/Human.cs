@@ -19,7 +19,7 @@ namespace LotrDungeon.Models.Entities
         {
         }
 
-        int luck {get;set;} = 3;
+        double luck {get;set;} = 0.1;
         public override int BASE_STAMINA_ATTACK => 3;
         public int CRITICAL_ATTACK_DAMAGE => 2;
 
@@ -45,7 +45,7 @@ namespace LotrDungeon.Models.Entities
         }
 
         public bool isCriticalAttack(){
-            bool isCritical = Randomize.IsRNG(luck, 3);
+            bool isCritical = Randomize.IsRNG(luck);
             if(isCritical)
                 Console.WriteLine($"{Name} had a lucky strike");
             return isCritical;

@@ -7,25 +7,25 @@ using LotrDungeon.Models.Entities;
 
 namespace LotrDungeon.Factories
 {
-    public class HumanCreator : Creator<Human>
+    public class ElveCreator : Creator<Elve>
     {
-        protected override List<string> Names {get;} = new(){
-            "Boromir",
-            "Faramir",
-            "Aragorn",
-            "Gabo"
+        protected override List<string> Names {get;} = new (){
+            "Amras",
+            "Argon",
+            "Carantir"
         };
-        public override Human FactoryMethod()
-        {
 
+        public override Elve FactoryMethod()
+        {
+            
             var basicStats = GetBasicStats();
-            EntitiesFactory<BaseWeapon> heavyFactory = new();
+            EntitiesFactory<HeavyWeapon> heavyFactory = new();
             List<BaseWeapon> weapon = new();
             heavyFactory.GenerateEntities(2).ToList().ForEach(weapon.Add);
-            EntitiesFactory<BaseDefense> baseFactory = new();
+            EntitiesFactory<Armor> baseFactory = new();
             List<BaseDefense> defense = new();
             baseFactory.GenerateEntities(2).ToList().ForEach(defense.Add);
-            return new Human(PickName(),basicStats,[],weapon,defense);
+            return new Elve(PickName(),basicStats,[],weapon,defense);
         }
     }
 }

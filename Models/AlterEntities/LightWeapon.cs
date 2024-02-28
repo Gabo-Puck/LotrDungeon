@@ -11,7 +11,7 @@ namespace LotrDungeon.Models.AlterEntities
     {
         public override string Classifier => "Light Weapon";
 
-        int BASE_CRITIC_CHANCE = 3;
+        double BASE_CRITIC_CHANCE = 0.2;
         int BASE_CRITIC_DAMAGE = 3;
         int CONSECUTIVE_ATTACKS = 2;
 
@@ -38,7 +38,7 @@ namespace LotrDungeon.Models.AlterEntities
             
             return (attackerState,defenderState);
         }
-        bool IsCriticAttack() => Randomize.IsRNG(BASE_CRITIC_CHANCE,BASE_CRITIC_CHANCE+4);
+        bool IsCriticAttack() => Randomize.IsRNG(BASE_CRITIC_CHANCE);
 
 
         public override string ToString()

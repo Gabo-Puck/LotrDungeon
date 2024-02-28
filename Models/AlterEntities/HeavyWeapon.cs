@@ -10,7 +10,7 @@ namespace LotrDungeon.Models.AlterEntities
     public class HeavyWeapon : BaseWeapon
     {
         public override string Classifier => "Heavy Weapon";
-        int BASE_STUN_CHANCE = 3;
+        double BASE_STUN_CHANCE = 0.3;
 
         public HeavyWeapon(string _Name, int _PowerAttack, int _StaminaUsage) : base(_Name, _PowerAttack, _StaminaUsage)
         {
@@ -30,7 +30,7 @@ namespace LotrDungeon.Models.AlterEntities
             return (attackerState,defenderState);
         }
 
-        bool IsPowerfulEnough() => Randomize.IsRNG(BASE_STUN_CHANCE,BASE_STUN_CHANCE+4);
+        bool IsPowerfulEnough() => Randomize.IsRNG(BASE_STUN_CHANCE);
 
         
         public override string ToString()

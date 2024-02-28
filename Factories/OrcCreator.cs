@@ -20,12 +20,13 @@ namespace LotrDungeon.Factories
             
             var basicStats = GetBasicStats();
             EntitiesFactory<HeavyWeapon> heavyFactory = new();
-            
-            HeavyWeapon weapon = heavyFactory.GenerateEntity();
+            List<BaseWeapon> weapon = new();
+            heavyFactory.GenerateEntities(2).ToList().ForEach(weapon.Add);
             EntitiesFactory<Armor> baseFactory = new();
-            
-            BaseDefense defense = baseFactory.GenerateEntity();
-            return new Orc(PickName(),basicStats,[],[weapon],[defense]);
+            List<BaseDefense> defense = new();
+            baseFactory.GenerateEntities(2).ToList().ForEach(defense.Add);
+        
+            return new Orc(PickName(),basicStats,[],weapon,defense);
         }
     }
 }

@@ -181,6 +181,8 @@ namespace LotrDungeon
         bool PlayerTurn {get;set;} = true;
 
         public Game(){
+            var factory2 = new EntitiesFactory<Elve>();
+            factory2.GenerateEntity();
             menuPickCharacter = new MenuPickCharacter();
             BaseEntity _player = menuPickCharacter.PickAction();
             player = _player;
@@ -217,6 +219,7 @@ namespace LotrDungeon
                     PlayerTurn = true;
                     return;
                 }
+                PlayerTurn = false;
                 Console.WriteLine("Your turn");
                 if(action is BaseWeapon){
                     player.attack((BaseWeapon)action, CurrentEnemy);
@@ -224,7 +227,6 @@ namespace LotrDungeon
                 if(action is BaseDefense){
                     player.defend((BaseDefense)action, CurrentEnemy);
                 }
-                PlayerTurn = false;
         }
 
         private void SpawnEnemies(int amount){

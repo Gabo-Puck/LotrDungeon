@@ -7,6 +7,7 @@ namespace LotrDungeon
 {
     public class Randomize
     {
-        public static bool IsRNG(int seed, int gap) => new Random().Next(0,seed + gap) > seed;
+        private static Random random = new Random();
+        public static bool IsRNG(double prob) => random.NextDouble() < prob; // Comprobar si está fuera del rango y si cumple con la probabilidad
     }
 }
