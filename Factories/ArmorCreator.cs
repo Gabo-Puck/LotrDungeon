@@ -10,7 +10,7 @@ namespace LotrDungeon.Factories
 {
     public class ArmorCreator : Creator<Armor>
     {
-        protected override int MAX_DEFENSE => 100;
+        protected override int MAX_DEFENSE => 50;
         protected override int MIN_DEFENSE => 0;
         protected override List<string> Names {get;} = new(){
             "Mithril Chainmail",

@@ -12,11 +12,13 @@ namespace LotrDungeon.Factories
     {
         protected override int MAX_STAMINA => 20;
         protected override int MIN_STAMINA => 13;
-        protected override int MAX_ATTACK => 30;
-        protected override int MIN_ATTACK => 20;
+        protected override int MAX_ATTACK => 15;
+        protected override int MIN_ATTACK => 10;
         protected override List<string> Names {get;} = new(){
             "Knife",
             "Dagger",
+            "Dawnbreaker",
+            "Fists",
         };
 
         public override LightWeapon FactoryMethod()
